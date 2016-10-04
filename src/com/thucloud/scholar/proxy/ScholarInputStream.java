@@ -1,25 +1,25 @@
-package me.herbix.fuckgfw;
+package com.thucloud.scholar.proxy;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-public class FuckGFWInputStream extends InputStream {
+public class ScholarInputStream extends InputStream {
 
 	static final byte[] MAP = new byte[256];
-	static final byte[] MASK = new byte[FuckGFWOutputStream.MASK.length];
+	static final byte[] MASK = new byte[ScholarOutputStream.MASK.length];
 
 	public static void genMap() {
-		byte[] from = FuckGFWOutputStream.MAP;
+		byte[] from = ScholarOutputStream.MAP;
 		for(int i=0; i<MAP.length; i++) {
 			MAP[from[i] & 0xFF] = (byte)i;
 		}
-		System.arraycopy(FuckGFWOutputStream.MASK, 0, MASK, 0, MASK.length);
+		System.arraycopy(ScholarOutputStream.MASK, 0, MASK, 0, MASK.length);
 	}
 
 	private InputStream parent;
 	private int pos = 0;
 
-	public FuckGFWInputStream(InputStream parent) {
+	public ScholarInputStream(InputStream parent) {
 		this.parent = parent;
 	}
 

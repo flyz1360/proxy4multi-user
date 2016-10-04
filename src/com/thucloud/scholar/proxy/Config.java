@@ -1,4 +1,4 @@
-package me.herbix.fuckgfw;
+package com.thucloud.scholar.proxy;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -17,8 +17,8 @@ public class Config {
 			in = new FileInputStream(file);
 			p.load(in);
 			SEED = Long.parseLong(get("seed", "0"));
-			FuckGFWOutputStream.genMap();
-			FuckGFWInputStream.genMap();
+			ScholarOutputStream.genMap();
+			ScholarInputStream.genMap();
 		} catch(Exception e) {
 			
 		}

@@ -1,10 +1,10 @@
-package me.herbix.fuckgfw;
+package com.thucloud.scholar.proxy;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Random;
 
-public class FuckGFWOutputStream extends OutputStream {
+public class ScholarOutputStream extends OutputStream {
 
 	static final byte[] MAP = new byte[256];
 	static final byte[] MASK = new byte[256];
@@ -28,7 +28,7 @@ public class FuckGFWOutputStream extends OutputStream {
 	private OutputStream parent;
 	private int pos = 0;
 
-	public FuckGFWOutputStream(OutputStream parent) {
+	public ScholarOutputStream(OutputStream parent) {
 		this.parent = parent;
 	}
 

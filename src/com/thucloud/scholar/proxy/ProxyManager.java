@@ -1,4 +1,4 @@
-package me.herbix.fuckgfw;
+package com.thucloud.scholar.proxy;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -21,7 +21,7 @@ import javax.xml.ws.handler.MessageContext;
  
 public class ProxyManager  {
 	private static int listenPort = 4127;
-	public static Map<Integer, Integer> bandwith = new HashMap<Integer, Integer>();
+	public static Map<Integer, Integer> bandwith = new HashMap<Integer, Integer>(); // 不同账号的带宽分配
 	
     @SuppressWarnings("resource")
 	public static void main(String[] args) throws IOException {
@@ -56,7 +56,6 @@ public class ProxyManager  {
 class Handler extends Thread {
     Socket socket;
     Executor executor;
-    
  
     public Handler(Socket s, Executor executor) {
         this.socket = s;
@@ -103,8 +102,16 @@ class Handler extends Thread {
             		Runtime.getRuntime().exec("tc class change dev eth9 parent  1: classid 1:"+(portNum-10000)+" htb rate "+ProxyManager.bandwith.get(type)+"mbit ceil "+(ProxyManager.bandwith.get(type)+1)+"mbit burst 20k");
 				}
 				Runtime.getRuntime().exec("iptables -D INPUT -p tcp --dport "+portNum+" -j DROP");
-			}
-            else if (head.equals("reopen")) {
+			} else if (head.equals("downgrade")) {
+				int portNum = 0, type = 0;
+            	portNum = Integer.parseInt(msg.split(",")[0]);
+            	type = (int)Float.parseFloat(msg.split(",")[1]);
+				
+				// TODO: 修改filter
+            	if (type != 0) {
+            		Runtime.getRuntime().exec("tc class change dev eth9 parent  1: classid 1:"+(portNum-10000)+" htb rate "+ProxyManager.bandwith.get(type)+"mbit ceil "+(ProxyManager.bandwith.get(type)+1)+"mbit burst 20k");
+				}
+			} else if (head.equals("reopen")) {
 				int portNum = 0;
 				portNum = Integer.parseInt(msg);
 				System.out.println("reopen port"+portNum);

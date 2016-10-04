@@ -1,4 +1,4 @@
-package me.herbix.fuckgfw;
+package com.thucloud.scholar.proxy;
 
 import java.io.BufferedReader;
 import java.io.File;

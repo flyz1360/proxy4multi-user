@@ -1,4 +1,4 @@
-package me.herbix.fuckgfw;
+package com.thucloud.scholar.proxy;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -81,7 +81,7 @@ public class Client implements Runnable {
 					InputStream in = null;
 					OutputStream out = null;
 					try {
-						in = new FuckGFWInputStream(new BufferedInputStream(s2.getInputStream()));
+						in = new ScholarInputStream(new BufferedInputStream(s2.getInputStream()));
 						out = s.getOutputStream();
 						byte[] buffer = new byte[4096];
 						int n = 1;
@@ -112,7 +112,7 @@ public class Client implements Runnable {
 					OutputStream out = null;
 					try {
 						in = s.getInputStream();
-						out = new FuckGFWOutputStream(new BufferedOutputStream(s2.getOutputStream()));
+						out = new ScholarOutputStream(new BufferedOutputStream(s2.getOutputStream()));
 						byte[] buffer = new byte[4096];
 						int n = 1;
 						while(n >= 0) {
