@@ -1,4 +1,4 @@
-package nio;
+package server;
 
 import java.nio.ByteBuffer;
 import java.util.Random;
@@ -11,7 +11,7 @@ public class BufferEncrypt {
 	public static long SEED;
 	
 	public static void init(){
-		SEED = ThreadLocalRandom.current().nextLong();
+		SEED = 1234567;
 		OutputControl.genMap();
 		InputControl.genMap();
 	}
