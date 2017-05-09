@@ -55,7 +55,7 @@ public class Client implements Runnable {
 						String loginTimeStr = this.dateFormat.format(this.loginTime);
 						this.ipAddr = sock.getInetAddress();
 						System.out.println("address of port "+portNum+" change to "+ipAddr+" at "+loginTime);
-						Runtime.getRuntime().exec("/home/zy/script/record_ip.sh "+portNum+" "+ipAddr.getHostAddress()+" "+loginTimeStr);
+						//Runtime.getRuntime().exec("/home/zy/script/record_ip.sh "+portNum+" "+ipAddr.getHostAddress()+" "+loginTimeStr);
 					}
 				}
 				onAccept(executor, sock);
@@ -151,7 +151,7 @@ public class Client implements Runnable {
 	}
 
 	public static void initConfig() {
-		Config.loadConfig("/home/zy/client/fuckgfw.conf");
+		Config.loadConfig("fuckgfw.conf");
 		serverHost = Config.get("server-host", "127.0.0.1");
 		serverPort = Config.get("server-port", 4129);
 		

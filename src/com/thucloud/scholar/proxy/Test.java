@@ -23,7 +23,7 @@ public class Test {
 		// TODO 自动生成的方法存根
 		Client.initConfig();
 		Executor executor = Executors.newCachedThreadPool();
-		Client s = new Client(3128);
+		Client s = new Client(20002);
 		executor.execute(s);
 	}
 }

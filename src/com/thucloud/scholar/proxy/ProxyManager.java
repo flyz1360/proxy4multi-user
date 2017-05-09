@@ -25,6 +25,7 @@ public class ProxyManager  {
 	
     @SuppressWarnings("resource")
 	public static void main(String[] args) throws IOException {
+    	// 带宽限制
     	bandwith.put(1, 1);
     	bandwith.put(5, 2);
     	bandwith.put(10, 5);
