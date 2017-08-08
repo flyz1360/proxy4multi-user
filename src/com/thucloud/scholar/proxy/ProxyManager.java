@@ -18,11 +18,11 @@ import java.util.concurrent.Executors;
 
 import javax.xml.transform.Templates;
 import javax.xml.ws.handler.MessageContext;
- 
+
 public class ProxyManager  {
 	private static int listenPort = 4127;
 	public static Map<Integer, Integer> bandwith = new HashMap<Integer, Integer>(); // 不同账号的带宽分配
-	
+
     @SuppressWarnings("resource")
 	public static void main(String[] args) throws IOException {
     	bandwith.put(1, 1);
@@ -35,7 +35,7 @@ public class ProxyManager  {
 			ss = new ServerSocket(listenPort);
 			Executor executor = Executors.newCachedThreadPool();
 			Client.initConfig();
-	    	
+
 	        System.out.println("manager startup.");
 	        while (true) {
 	            try {
@@ -45,27 +45,27 @@ public class ProxyManager  {
 	            } catch (IOException e) {
 	                e.printStackTrace();
 	            }
-	        } 
+	        }
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
     }
- 
+
 }
- 
+
 class Handler extends Thread {
     Socket socket;
     Executor executor;
- 
+
     public Handler(Socket s, Executor executor) {
         this.socket = s;
         this.executor = executor;
     }
- 
+
     @Override
     public void run() {
         System.out.println("in handling..");
- 
+
         try {
             InputStream is = socket.getInputStream();
             BufferedReader in = new BufferedReader(new InputStreamReader(is));
@@ -75,13 +75,13 @@ class Handler extends Thread {
             String head = null, msg = null;
             head = data.split("@")[0];
             msg = data.split("@")[1];
-            
+
             // TODO: 根据消息头进行各种操作
             if (head.equals("addport")) {
             	int portNum = 0, type = 0;
             	portNum = Integer.parseInt(msg.split(",")[0]);
             	type = (int)Float.parseFloat(msg.split(",")[1]);
-            	
+
             	// TODO: shell记录流量
             	Client s = new Client(portNum);
 				executor.execute(s);
@@ -89,14 +89,14 @@ class Handler extends Thread {
 				if (type != 0) {
 					Runtime.getRuntime().exec("iptables -A OUTPUT -p tcp --sport "+portNum+" -j ACCEPT");
 					Runtime.getRuntime().exec("iptables -t mangle -A OUTPUT -p tcp --sport "+portNum+" -j MARK --set-mark "+(portNum-10000));
-					Runtime.getRuntime().exec("tc class add dev eth9 parent  1: classid 1:"+(portNum-10000)+" htb rate "+ProxyManager.bandwith.get(type)+"mbit ceil "+(ProxyManager.bandwith.get(type)+1)+"mbit burst 20k");
+					Runtime.getRuntime().exec("tc class add dev eth9 parent  1: classid 1:"+(portNum-10000)+" htb rate "+ProxyManager.bandwith.get(type)+"mbit ceil "+(ProxyManager.bandwidth.get(type)+1)+"mbit burst 20k");
 					Runtime.getRuntime().exec("tc filter add dev eth9 parent 1: protocol ip prio 1 handle "+(portNum-10000)+" fw classid 1:"+(portNum-10000));
-				}				
+				}
 			} else if (head.equals("upgrade")) {
 				int portNum = 0, type = 0;
             	portNum = Integer.parseInt(msg.split(",")[0]);
             	type = (int)Float.parseFloat(msg.split(",")[1]);
-				
+
 				// TODO: 修改filter
             	if (type != 0) {
             		Runtime.getRuntime().exec("tc class change dev eth9 parent  1: classid 1:"+(portNum-10000)+" htb rate "+ProxyManager.bandwith.get(type)+"mbit ceil "+(ProxyManager.bandwith.get(type)+1)+"mbit burst 20k");
@@ -106,7 +106,7 @@ class Handler extends Thread {
 				int portNum = 0, type = 0;
             	portNum = Integer.parseInt(msg.split(",")[0]);
             	type = (int)Float.parseFloat(msg.split(",")[1]);
-				
+
 				// TODO: 修改filter
             	if (type != 0) {
             		Runtime.getRuntime().exec("tc class change dev eth9 parent  1: classid 1:"+(portNum-10000)+" htb rate "+ProxyManager.bandwith.get(type)+"mbit ceil "+(ProxyManager.bandwith.get(type)+1)+"mbit burst 20k");
@@ -115,12 +115,12 @@ class Handler extends Thread {
 				int portNum = 0;
 				portNum = Integer.parseInt(msg);
 				System.out.println("reopen port"+portNum);
-				
+
 				// TODO: shell去掉iptables drop 同时删除over_flow中的文件
 				Runtime.getRuntime().exec("iptables -D INPUT -p tcp --dport "+portNum+" -j DROP");
 				Runtime.getRuntime().exec("iptables -D INPUT -p tcp --dport "+portNum+" -j DROP");
 				Runtime.getRuntime().exec("iptables -D INPUT -p tcp --dport "+portNum+" -j DROP");
-				
+
 				File file = new File("/proxy/over_flow/"+portNum+".1");
 				if (file.isFile() && file.exists()) {
 					file.delete();
@@ -138,7 +138,7 @@ class Handler extends Thread {
 				portNum = Integer.parseInt(msg.split(",")[0]);
             	type = Integer.parseInt(msg.split(",")[1]);
             	System.out.println("close port"+portNum+"type"+type);
-            	
+
 				// TODO: shell添加iptables drop
 				Runtime.getRuntime().exec("iptables -A INPUT -p tcp --dport "+portNum+" -j DROP");
 				// 记录在文件中，使得服务器重启时还能添加这条drop规则
@@ -148,7 +148,7 @@ class Handler extends Thread {
 			} else if (head.equals("getflow")) {
 				int portNum = 0;
 				portNum = Integer.parseInt(msg);
-				
+
 				// TODO: 读取flow的log，解析并返回
 				BufferedWriter outStream = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 				float flowResult;
@@ -157,14 +157,14 @@ class Handler extends Thread {
 				} catch (Exception e) {
 					flowResult = 0;
 				}
-				
+
 				outStream.write(String.valueOf(flowResult));
 				System.out.println("get "+portNum+" flow result "+ flowResult);;
 				outStream.flush();
 			} else if (head.equals("preflow")) {
 				int portNum = 0;
 				portNum = Integer.parseInt(msg);
-				
+
 				// TODO: 读取flow的log，解析并返回
 				BufferedWriter outStream = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 				float flowResult;
@@ -173,14 +173,14 @@ class Handler extends Thread {
 				} catch (Exception e) {
 					flowResult = 0;
 				}
-				
+
 				outStream.write(String.valueOf(flowResult));
 				System.out.println("get "+portNum+" pre flow "+ flowResult);;
 				outStream.flush();
 			} else if (head.equals("getIP")) {
 				int portNum = 0;
 				portNum = Integer.parseInt(msg);
-				
+
 				// TODO: 读取ip的log，解析并返回
 				BufferedWriter outStream = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 				String IPAddress;
@@ -191,12 +191,12 @@ class Handler extends Thread {
 				}
 				outStream.write(IPAddress);
 				System.out.println("get "+portNum+" IP "+ IPAddress);;
-				outStream.flush(); 
+				outStream.flush();
 			}
 			else if (head.equals("getIPList")) {
 				int portNum = 0;
 				portNum = Integer.parseInt(msg);
-				
+
 				// TODO: 读取ip的log，解析并返回
 				BufferedWriter outStream = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 				String[] IPInfo;
@@ -206,7 +206,7 @@ class Handler extends Thread {
 					IPInfo = null;
 					outStream.write("");
 				}
-				
+
 				if (IPInfo != null) {
 					for (int i = 0; i < IPInfo.length; i++) {
 						if (IPInfo[i].equals("")) break;
@@ -214,7 +214,7 @@ class Handler extends Thread {
 						outStream.write(IPInfo[i]+",");
 					}
 				}
-								
+
 				System.out.println("get "+portNum+" IP list");
 				outStream.flush();
 			}
@@ -225,6 +225,6 @@ class Handler extends Thread {
             System.out.println("done.");
         } catch (Exception e) {
         	System.out.println(e);
-        } 
+        }
     }
 }

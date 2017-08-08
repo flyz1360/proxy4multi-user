@@ -8,5 +8,4 @@ user：读取键盘输入，发送给client，然后获得client的返回消息，将消息打印出来。
 
 BUG说明：
 1. server、client运行之后，关闭client的窗口，server也会关闭
-2. client读取server返回的消息，发送给user之后，user读消息时能够读到正确的字节数，但是除了第一次，
-之后几次打印的都是空的
+2. client读取server返回的消息，发送给user之后，user读消息时能够读到正确的字节数，但是除了第一次，之后几次打印的都是空的

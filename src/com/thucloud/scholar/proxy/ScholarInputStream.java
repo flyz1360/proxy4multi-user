@@ -30,7 +30,7 @@ public class ScholarInputStream extends InputStream {
 		pos = (pos + 1) % MASK.length;
 		return r;
 	}
-	
+
 	@Override
 	public int read(byte b[], int off, int len) throws IOException {
 		if (b == null) {
@@ -46,7 +46,7 @@ public class ScholarInputStream extends InputStream {
 		    return -1;
 		}
 		b[off] = (byte)c;
-		
+
 		len = Math.min(len, parent.available());
 
 		int i = 1;
@@ -62,5 +62,5 @@ public class ScholarInputStream extends InputStream {
 		}
 		return i;
 	}
-	
+
 }
