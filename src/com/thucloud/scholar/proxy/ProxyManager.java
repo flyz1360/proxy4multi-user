@@ -21,7 +21,7 @@ import javax.xml.ws.handler.MessageContext;
 
 public class ProxyManager  {
 	private static int listenPort = 4127;
-	public static Map<Integer, Integer> bandwith = new HashMap<Integer, Integer>(); // 不同账号的带宽分配
+	public static Map<Integer, Integer> bandwith = new HashMap<Integer, Integer>(); // 涓嶅悓璐﹀彿鐨勫甫瀹藉垎閰�
 
     @SuppressWarnings("resource")
 	public static void main(String[] args) throws IOException {
@@ -40,7 +40,7 @@ public class ProxyManager  {
 	        while (true) {
 	            try {
 	                Socket s = ss.accept();
-	                // 每个客户端一个处理线程
+	                // 姣忎釜瀹㈡埛绔竴涓鐞嗙嚎绋�
 	                new Handler(s, executor).start();
 	            } catch (IOException e) {
 	                e.printStackTrace();
@@ -76,13 +76,13 @@ class Handler extends Thread {
             head = data.split("@")[0];
             msg = data.split("@")[1];
 
-            // TODO: 根据消息头进行各种操作
+            // TODO: 鏍规嵁娑堟伅澶磋繘琛屽悇绉嶆搷浣�
             if (head.equals("addport")) {
             	int portNum = 0, type = 0;
             	portNum = Integer.parseInt(msg.split(",")[0]);
             	type = (int)Float.parseFloat(msg.split(",")[1]);
 
-            	// TODO: shell记录流量
+            	// TODO: shell璁板綍娴侀噺
             	Client s = new Client(portNum);
 				executor.execute(s);
 				System.out.println("open port"+portNum+"type"+type);
@@ -97,7 +97,7 @@ class Handler extends Thread {
             	portNum = Integer.parseInt(msg.split(",")[0]);
             	type = (int)Float.parseFloat(msg.split(",")[1]);
 
-				// TODO: 修改filter
+				// TODO: 淇敼filter
             	if (type != 0) {
             		Runtime.getRuntime().exec("tc class change dev eth9 parent  1: classid 1:"+(portNum-10000)+" htb rate "+ProxyManager.bandwith.get(type)+"mbit ceil "+(ProxyManager.bandwith.get(type)+1)+"mbit burst 20k");
 				}
@@ -107,7 +107,7 @@ class Handler extends Thread {
             	portNum = Integer.parseInt(msg.split(",")[0]);
             	type = (int)Float.parseFloat(msg.split(",")[1]);
 
-				// TODO: 修改filter
+				// TODO: 淇敼filter
             	if (type != 0) {
             		Runtime.getRuntime().exec("tc class change dev eth9 parent  1: classid 1:"+(portNum-10000)+" htb rate "+ProxyManager.bandwith.get(type)+"mbit ceil "+(ProxyManager.bandwith.get(type)+1)+"mbit burst 20k");
 				}
@@ -116,7 +116,7 @@ class Handler extends Thread {
 				portNum = Integer.parseInt(msg);
 				System.out.println("reopen port"+portNum);
 
-				// TODO: shell去掉iptables drop 同时删除over_flow中的文件
+				// TODO: shell鍘绘帀iptables drop 鍚屾椂鍒犻櫎over_flow涓殑鏂囦欢
 				Runtime.getRuntime().exec("iptables -D INPUT -p tcp --dport "+portNum+" -j DROP");
 				Runtime.getRuntime().exec("iptables -D INPUT -p tcp --dport "+portNum+" -j DROP");
 				Runtime.getRuntime().exec("iptables -D INPUT -p tcp --dport "+portNum+" -j DROP");
@@ -139,9 +139,9 @@ class Handler extends Thread {
             	type = Integer.parseInt(msg.split(",")[1]);
             	System.out.println("close port"+portNum+"type"+type);
 
-				// TODO: shell添加iptables drop
+				// TODO: shell娣诲姞iptables drop
 				Runtime.getRuntime().exec("iptables -A INPUT -p tcp --dport "+portNum+" -j DROP");
-				// 记录在文件中，使得服务器重启时还能添加这条drop规则
+				// 璁板綍鍦ㄦ枃浠朵腑锛屼娇寰楁湇鍔″櫒閲嶅惎鏃惰繕鑳芥坊鍔犺繖鏉rop瑙勫垯
 				BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File("/proxy/over_flow/"+String.valueOf(portNum)+"."+String.valueOf(type)))));
 				out.write(" ");
 				out.close();
@@ -149,7 +149,7 @@ class Handler extends Thread {
 				int portNum = 0;
 				portNum = Integer.parseInt(msg);
 
-				// TODO: 读取flow的log，解析并返回
+				// TODO: 璇诲彇flow鐨刲og锛岃В鏋愬苟杩斿洖
 				BufferedWriter outStream = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 				float flowResult;
 				try {
@@ -165,7 +165,7 @@ class Handler extends Thread {
 				int portNum = 0;
 				portNum = Integer.parseInt(msg);
 
-				// TODO: 读取flow的log，解析并返回
+				// TODO: 璇诲彇flow鐨刲og锛岃В鏋愬苟杩斿洖
 				BufferedWriter outStream = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 				float flowResult;
 				try {
@@ -181,7 +181,7 @@ class Handler extends Thread {
 				int portNum = 0;
 				portNum = Integer.parseInt(msg);
 
-				// TODO: 读取ip的log，解析并返回
+				// TODO: 璇诲彇ip鐨刲og锛岃В鏋愬苟杩斿洖
 				BufferedWriter outStream = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 				String IPAddress;
 				try {
@@ -197,7 +197,7 @@ class Handler extends Thread {
 				int portNum = 0;
 				portNum = Integer.parseInt(msg);
 
-				// TODO: 读取ip的log，解析并返回
+				// TODO: 璇诲彇ip鐨刲og锛岃В鏋愬苟杩斿洖
 				BufferedWriter outStream = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 				String[] IPInfo;
 				try {

@@ -151,7 +151,7 @@ public class Client implements Runnable {
 	}
 
 	public static void initConfig() {
-		Config.loadConfig("/home/zy/client/fuckgfw.conf");
+		Config.loadConfig("servers.conf");
 		serverHost = Config.get("server-host", "127.0.0.1");
 		serverPort = Config.get("server-port", 4129);
 		
